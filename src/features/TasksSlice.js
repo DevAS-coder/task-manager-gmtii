@@ -7,8 +7,11 @@ const TasksSlice = createSlice({
     updateFromLocal: (state, action) => {
       return { value: [...action.payload] }
     },
+    addTask: (state, action) => {
+        state.value.push(action.payload)
+    }
   },
 });
 
-export const { updateFromLocal } = TasksSlice.actions;
+export const { updateFromLocal, addTask } = TasksSlice.actions;
 export default TasksSlice.reducer;
