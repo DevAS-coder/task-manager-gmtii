@@ -12,19 +12,38 @@ function App() {
   const [addNewTask, setaddNewTask] = useState(false)
 
   // Add Task Function
-  const taskAdded = (title, description) => {
-    dispatch(addTask({ title: title, description: description }))
-    // localStorage.setItem('tasks', JSON.stringify(tasks))
+  const taskAdded = async (title, description) => {
+    dispatch(addTask({ title: title, description: description, completed: false }))
     setaddNewTask(false)
+    try {
+      const response = await fetch('http://46.100.46.149:8069/api/task/', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          title: title,
+          description: description,
+          completed: false,
+        }),
+      });
+    
+      if (!response.ok) {
+        throw new Error(`Request failed with status ${response.status}`);
+      }
+    
+      const data = await response.json();
+    } catch (error) {
+      console.error("Error adding task:", error);
+    }
   }
 
   // Load Data From API
   useEffect(() => {
     const fetchTasks = async () => {
       try {
-        const response = await fetch('http://46.100.46.149:8069/api/tasks');
+        const response = await fetch('http://46.100.46.149:8069/api/task/');
         const data = await response.json();
-        console.log(data);
 
         dispatch(updateFromAPI(data.results));
       } catch (error) {
@@ -36,7 +55,7 @@ function App() {
   }, []);
 
   return (
-    <div className="w-96 h-auto flex-col justify-center p-5 border-2 border-gray-300 rounded-4xl ">
+    <div className="w-88 md:w-96 h-auto flex-col justify-center p-5 border-2 border-gray-300 rounded-4xl ">
 
       {/* Add new Task Button */}
       {addNewTask ? 
@@ -47,7 +66,7 @@ function App() {
       <button onClick={() => { setaddNewTask(true) }} className="bg-white w-full p-1 rounded-4xl cursor-pointer">Add New Task</button>}
 
       {/* Task Lists */}
-      <div className="overflow-y-scroll overflow-x-hidden max-h-75">
+      <div className="overflow-y-scroll overflow-x-hidden max-h-75 custom-scrollbar">
         {
           tasks.length != 0 ?
             tasks.map(
