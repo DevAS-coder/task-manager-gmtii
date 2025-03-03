@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react"
 import { useDispatch, useSelector } from "react-redux"
-import { addTask, updateFromLocal } from "./features/TasksSlice"
-import EmptyList from "./components/emptyList"
+import { addTask, updateFromAPI } from "./features/TasksSlice"
 import AddNew from "./components/AddNew"
+import Loading from "./components/Loading"
+import TaskCard from "./components/TaskCard"
 
 function App() {
   // Define States
@@ -12,49 +13,54 @@ function App() {
 
   // Add Task Function
   const taskAdded = (title, description) => {
-    dispatch(addTask({title: title, description: description}))
-    localStorage.setItem('tasks', JSON.stringify(tasks))
+    dispatch(addTask({ title: title, description: description }))
+    // localStorage.setItem('tasks', JSON.stringify(tasks))
     setaddNewTask(false)
   }
 
-  // Load And Save From Localstorage if available
+  // Load Data From API
   useEffect(() => {
-    const savedTasks = localStorage.getItem('tasks')
+    const fetchTasks = async () => {
+      try {
+        const response = await fetch('http://46.100.46.149:8069/api/tasks');
+        const data = await response.json();
+        console.log(data);
 
-    if(savedTasks && savedTasks.length != 0){
-      dispatch(updateFromLocal(JSON.parse(savedTasks)))
-    }
-    
-    else{
-      localStorage.setItem('tasks', JSON.stringify(tasks))
-    }
+        dispatch(updateFromAPI(data.results));
+      } catch (error) {
+        console.error('Error fetching tasks:', error);
+      }
+    };
 
-  },[])
-
-  // Save To Localstorage
-  useEffect(()=>{
-    localStorage.setItem('tasks', JSON.stringify(tasks))
-  },[tasks])
+    fetchTasks();
+  }, []);
 
   return (
-      <div className="w-96 h-auto flex-col justify-center p-5 border-2 border-gray-300 rounded-4xl">
-        
-        {/* Add new Task Button */}
-        {addNewTask ? <AddNew func={taskAdded}/> : <button onClick={() => {setaddNewTask(true)}} className="bg-white w-full p-1 rounded-4xl cursor-pointer">Add New Task</button>}
+    <div className="w-96 h-auto flex-col justify-center p-5 border-2 border-gray-300 rounded-4xl ">
 
-        {/* Task Lists */}
+      {/* Add new Task Button */}
+      {addNewTask ? 
+      <div>
+        <AddNew func={taskAdded} />
+        <button onClick={() => {setaddNewTask(false)}} className="bg-red-600 w-full p-1 rounded-4xl text-white mt-1 mb-1 cursor-pointer">CANCEL</button>
+      </div> : 
+      <button onClick={() => { setaddNewTask(true) }} className="bg-white w-full p-1 rounded-4xl cursor-pointer">Add New Task</button>}
+
+      {/* Task Lists */}
+      <div className="overflow-y-scroll overflow-x-hidden max-h-75">
         {
-        tasks.length != 0 ?
-         tasks.map( 
-          (task, index) => 
-          {console.log('Task')} 
-          ) : 
-          <div>
-            <hr className="mt-5 text-white mb-5"/>
-            <EmptyList/>
-          </div>
+          tasks.length != 0 ?
+            tasks.map(
+              (task, index) =>
+                <TaskCard key={task.id} task={task} />
+            ) :
+            <div>
+              <hr className="mt-5 text-white mb-5" />
+              <Loading />
+            </div>
         }
       </div>
+    </div>
   )
 }
 export default App

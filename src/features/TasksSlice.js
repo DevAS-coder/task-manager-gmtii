@@ -4,7 +4,7 @@ const TasksSlice = createSlice({
   name: "tasks",
   initialState: { value: []},
   reducers: {
-    updateFromLocal: (state, action) => {
+    updateFromAPI: (state, action) => {
       return { value: [...action.payload] }
     },
     addTask: (state, action) => {
@@ -13,5 +13,5 @@ const TasksSlice = createSlice({
   },
 });
 
-export const { updateFromLocal, addTask } = TasksSlice.actions;
+export const { updateFromAPI, addTask } = TasksSlice.actions;
 export default TasksSlice.reducer;
