@@ -13,7 +13,6 @@ function App() {
 
   // Add Task Function
   const taskAdded = async (title, description) => {
-    dispatch(addTask({ title: title, description: description, completed: false }))
     setaddNewTask(false)
     try {
       const response = await fetch('http://46.100.46.149:8069/api/task/', {
@@ -33,6 +32,7 @@ function App() {
       }
     
       const data = await response.json();
+      dispatch(addTask(data))
     } catch (error) {
       console.error("Error adding task:", error);
     }

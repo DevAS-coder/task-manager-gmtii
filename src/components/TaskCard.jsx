@@ -1,24 +1,29 @@
 import React, { useState } from 'react'
 import Title from './Title'
 import Description from './Description'
+import Delete from './Delete'
+import CompeleteCheck from './CompeleteCheck'
 
 function TaskCard({ task }) {
-
-    const { title, description, id, completed } = task
+    const { id, completed } = task
     const [isDone, setisDone] = useState(completed)
+
+    const onCheckChange = () => {
+        setisDone(!isDone)
+    }
 
     return (
         <div className='text-white border-2 border-white m-2 p-3 rounded-xl flex justify-between'>
             <div className='w-52 break-words'>
-                <Title title={title} completed={isDone}/>
+                <Title task={task} completed={isDone}/>
 
                 <div className='bg-gray-400 h-px w-52 my-2'></div>
-                
-                <Description description={description}/>
+
+                <Description task={task}/>
             </div>
             <div className='flex flex-col justify-evenly items-center'>
-                <input className='w-4 h-4' type='checkbox' checked={isDone ? true : false} onChange={() => { setisDone(!isDone) }} />
-                <i className="fa-solid fa-trash-can text-red-500 text-lg cursor-pointer"></i>
+                <CompeleteCheck task={task} completed={isDone} func={onCheckChange}/>
+                <Delete id={id}/>
             </div>
         </div>
     )
