@@ -1,7 +1,10 @@
 import React, { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { editTask } from '../features/TasksSlice';
 
 function Description({ task }) {
     const { title, description, id, completed } = task
+    const dispatch = useDispatch()
     const [isEditingDescription, setisEditingDescription] = useState(false);
     const [Description, setDescription] = useState(description);
     const textareaRef = useRef(null); 
@@ -13,6 +16,7 @@ function Description({ task }) {
 
     const editDescription = async () => {
         setisEditingDescription(false)
+        dispatch(editTask(id, Description))
         if (Description != description) {
             try {
                 const response = await fetch(`http://46.100.46.149:8069/api/task/${id}/`, {

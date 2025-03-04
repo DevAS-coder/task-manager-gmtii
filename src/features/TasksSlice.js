@@ -12,9 +12,16 @@ const TasksSlice = createSlice({
     },
     deletedTask: (state,action) => {
       state.value = state.value.filter((task) => task.id !== action.payload);
+    },
+    editTask: (state, action) => {
+      const { id, newValue } = action.payload;
+      const taskIndex = state.value.findIndex(task => task.id === id);
+      if (taskIndex !== -1) {
+        state.value[taskIndex] = { ...state.value[taskIndex], ...newValue };
+      }
     }
   },
 });
 
-export const { updateFromAPI, addTask, deletedTask } = TasksSlice.actions;
+export const { updateFromAPI, addTask, deletedTask,editTask } = TasksSlice.actions;
 export default TasksSlice.reducer;

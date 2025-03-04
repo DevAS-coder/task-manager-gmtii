@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 function CompeleteCheck({ task ,completed, func }) {
     const { title, description, id } = task
     const editChecked = async () => {
-        func()
+        func(id, !completed)
         try {
             const response = await fetch(`http://46.100.46.149:8069/api/task/${id}/`, {
                 method: 'PUT',

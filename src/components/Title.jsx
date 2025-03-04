@@ -1,6 +1,9 @@
 import React, { useState, useRef } from 'react';
+import { useDispatch } from 'react-redux';
+import { editTask } from '../features/TasksSlice';
 
 function Title({ task, completed }) {
+    const dispatch = useDispatch()
     const { title, description, id } = task
     const [isEditingTitle, setisEditingTitle] = useState(false);
     const [Title, setTitle] = useState(title);
@@ -13,6 +16,7 @@ function Title({ task, completed }) {
 
     const editTitle = async () => {
         setisEditingTitle(false)
+        dispatch(editTask(id, Title))
         if (Title != title) {
             try {
                 const response = await fetch(`http://46.100.46.149:8069/api/task/${id}/`, {

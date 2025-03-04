@@ -52,7 +52,7 @@ function App() {
     };
 
     fetchTasks();
-  }, []);
+  }, [tasks]);
 
   return (
     <div className="w-88 md:w-96 h-auto flex-col justify-center p-5 border-2 border-gray-300 rounded-4xl ">
